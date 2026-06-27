@@ -1,0 +1,34 @@
+# Go build files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+go.work
+
+# Environment variables / secrets
+.env
+app.env
+*.env
+
+# OS files
+.DS_Store
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Database/data files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
