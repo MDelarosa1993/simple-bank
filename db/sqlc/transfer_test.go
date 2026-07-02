@@ -27,6 +27,7 @@ func createRandomTransfer(t *testing.T) Transfer {
 
 	require.Equal(t, params.FromAccountID, transfer.FromAccountID)
 	require.Equal(t, params.ToAccountID, transfer.ToAccountID)
+	require.Equal(t, params.Amount, transfer.Amount)
 
 	require.NotZero(t, transfer.ID)
 	require.NotZero(t, transfer.CreatedAt)
@@ -43,10 +44,10 @@ func TestDeleteTransfer(t *testing.T) {
 
 	err := testQueries.DeleteTransfer(context.Background(), transfer.ID)
 
-	deletedEntry, err := testQueries.GetTransfer(context.Background(), transfer.ID)
+	deletedTransfer, err := testQueries.GetTransfer(context.Background(), transfer.ID)
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
-	require.Empty(t, deletedEntry)
+	require.Empty(t, deletedTransfer)
 }
 
 func TestListTransfers(t *testing.T) {
@@ -96,7 +97,8 @@ func TestGetTransfer(t *testing.T) {
 	require.NotEmpty(t, transfer2)
 
 	require.Equal(t, transfer1.ID, transfer2.ID)
-	require.Equal(t, transfer1.FromAccountID, transfer1.FromAccountID)
+	require.Equal(t, transfer1.FromAccountID, transfer2.FromAccountID)
 	require.Equal(t, transfer1.ToAccountID, transfer2.ToAccountID)
+	require.Equal(t, transfer1.Amount, transfer2.Amount)
 	require.WithinDuration(t, transfer1.CreatedAt, transfer2.CreatedAt, time.Second)
 }
