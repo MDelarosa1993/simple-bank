@@ -40,6 +40,9 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
 
+		txName := ctx.Value(txKey)
+
+		fmt.Println(txName, "creating transfer")
 		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountID: params.FromAccountID,
 			ToAccountID:   params.ToAccountID,
@@ -49,6 +52,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
+		fmt.Println(txName, "creating entry 1")
 		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: params.FromAccountID,
 			Amount:    -params.Amount,
@@ -57,6 +61,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
+		fmt.Println(txName, "creating entry 2")
 		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: params.ToAccountID,
 			Amount:    params.Amount,
@@ -65,11 +70,13 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
+		fmt.Println(txName, "get account 1")
 		account1, err := q.GetAccountForUpdate(ctx, params.FromAccountID)
 		if err != nil {
 			return err
 		}
 
+		fmt.Println(txName, "update account 1")
 		result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
 			ID: params.FromAccountID,
 			Balance: account1.Balance - params.Amount,
@@ -78,11 +85,13 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
+		fmt.Println(txName, "get account 2")
 		account2, err := q.GetAccountForUpdate(ctx, params.ToAccountID)
 		if err != nil {
 			return err
 		}
 
+		fmt.Println(txName, "update account 2")
 		result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
 			ID: params.ToAccountID,
 			Balance: account2.Balance + params.Amount,
