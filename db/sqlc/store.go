@@ -40,8 +40,6 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
 
-		txName := ctx.Value(txKey)
-
 		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountID: params.FromAccountID,
 			ToAccountID:   params.ToAccountID,
@@ -73,7 +71,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 		}
 
 		result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID: params.FromAccountID,
+			ID:      params.FromAccountID,
 			Balance: account1.Balance - params.Amount,
 		})
 		if err != nil {
@@ -86,7 +84,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 		}
 
 		result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID: params.ToAccountID,
+			ID:      params.ToAccountID,
 			Balance: account2.Balance + params.Amount,
 		})
 		if err != nil {
