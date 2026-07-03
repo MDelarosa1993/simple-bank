@@ -16,7 +16,7 @@ func NewStore(db *sql.DB) *Store {
 
 // execTx executes a transaction within a database transaction
 func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
-	tx, err := store.db.BeginTx(ctx, &sql.TxOptions{})
+	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
-		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: params.FromAccountID,
 			Amount:    -params.Amount,
 		})
@@ -57,7 +57,7 @@ func (store *Store) TransferTx(ctx context.Context, params TransferTxParams) (Tr
 			return err
 		}
 
-		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: params.ToAccountID,
 			Amount:    params.Amount,
 		})
